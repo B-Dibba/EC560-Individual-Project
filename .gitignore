@@ -52,6 +52,8 @@ rsconnect/
 # Log files
 output/log_*.txt
 
-
+# Raw data files (too large for GitHub — download from BTS)
+data/raw/*.csv
+data/raw/*.html
 
 
