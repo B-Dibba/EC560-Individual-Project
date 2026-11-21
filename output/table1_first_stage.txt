@@ -1,0 +1,39 @@
+
+\begingroup
+\centering
+\begin{tabular}{lcccccc}
+   \tabularnewline \midrule \midrule
+   Dependent Variable: & \multicolumn{6}{c}{log\_price}\\
+                              & (1) Base        & (2) +IV1        & (3) +IV2        & (4) +IV3        & (5) All IVs     & (6) Mkt FE \\   
+   Model:                     & (1)             & (2)             & (3)             & (4)             & (5)             & (6)\\  
+   \midrule
+   \emph{Variables}\\
+   log\_dist                  & 0.2317$^{***}$  & 0.2761$^{***}$  & 0.1923$^{***}$  & 0.2363$^{***}$  & 0.2290$^{***}$  &   \\   
+                              & (0.0032)        & (0.0036)        & (0.0047)        & (0.0031)        & (0.0053)        &   \\   
+   frac\_nonstop              & -0.1052$^{***}$ & -0.0739$^{***}$ & -0.0745$^{***}$ & -0.0964$^{***}$ & -0.0483$^{***}$ &   \\   
+                              & (0.0044)        & (0.0043)        & (0.0049)        & (0.0043)        & (0.0045)        &   \\   
+   iv\_blp\_rival\_logdist    &                 & -0.0042$^{***}$ &                 &                 & -0.0033$^{***}$ &   \\   
+                              &                 & (0.0002)        &                 &                 & (0.0002)        &   \\   
+   iv\_hausman                &                 &                 & -1.954$^{***}$  &                 & -1.922$^{***}$  & -1.578$^{***}$\\   
+                              &                 &                 & (0.2095)        &                 & (0.2052)        & (0.1684)\\   
+   iv\_sw\_rival              &                 &                 &                 & -0.0722$^{***}$ & -0.0160$^{***}$ &   \\   
+                              &                 &                 &                 & (0.0037)        & (0.0037)        &   \\   
+   \midrule
+   \emph{Fixed-effects}\\
+   carrier                    & Yes             & Yes             & Yes             & Yes             & Yes             & Yes\\  
+   market\_id                 &                 &                 &                 &                 &                 & Yes\\  
+   \midrule
+   \emph{Fit statistics}\\
+   Observations               & 36,420          & 36,420          & 36,420          & 36,420          & 36,420          & 36,420\\  
+   R$^2$                      & 0.73488         & 0.74382         & 0.79889         & 0.73996         & 0.80605         & 0.88416\\  
+   Within R$^2$               & 0.33517         & 0.35760         & 0.49568         & 0.34792         & 0.51364         & 0.22353\\  
+   \midrule \midrule
+   \multicolumn{7}{l}{\emph{Clustered (market\_id) standard-errors in parentheses}}\\
+   \multicolumn{7}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
+\end{tabular}
+ 
+\par \raggedright 
+Cluster-robust SE by market\_id. Carrier FE in all specs. Spec (6) adds market FE; IV1 absorbed.
+\par\endgroup
+
+

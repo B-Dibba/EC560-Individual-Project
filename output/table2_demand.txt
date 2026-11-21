@@ -1,0 +1,35 @@
+
+\begingroup
+\centering
+\begin{tabular}{lccc}
+   \tabularnewline \midrule \midrule
+   Dependent Variable: & \multicolumn{3}{c}{y\_logit\_flex}\\
+                  & (1) OLS (biased) & (2) 2SLS carrier FE & (3) 2SLS carrier+mkt FE \\   
+   Model:         & (1)              & (2)                 & (3)\\  
+   \midrule
+   \emph{Variables}\\
+   price          & 0.0004$^{**}$    & 0.0051$^{***}$      & -0.0041$^{***}$\\   
+                  & (0.0002)         & (0.0005)            & (0.0005)\\   
+   log\_dist      & 0.9672$^{***}$   & 0.6429$^{***}$      &   \\   
+                  & (0.0197)         & (0.0396)            &   \\   
+   frac\_nonstop  & 1.824$^{***}$    & 1.913$^{***}$       &   \\   
+                  & (0.0233)         & (0.0254)            &   \\   
+   \midrule
+   \emph{Fixed-effects}\\
+   carrier        & Yes              & Yes                 & Yes\\  
+   market\_id     &                  &                     & Yes\\  
+   \midrule
+   \emph{Fit statistics}\\
+   Observations   & 36,420           & 36,420              & 36,420\\  
+   R$^2$          & 0.38100          & 0.39191             & 0.40319\\  
+   Within R$^2$   & 0.22729          & 0.24091             & 0.00501\\  
+   \midrule \midrule
+   \multicolumn{4}{l}{\emph{Clustered (market\_id) standard-errors in parentheses}}\\
+   \multicolumn{4}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
+\end{tabular}
+ 
+\par \raggedright 
+Cluster-robust SE by market\_id. Flexible outside share (distance-based multiplier). Spec (3) uses IV2+IV3 only (IV1 absorbed by market FE).
+\par\endgroup
+
+

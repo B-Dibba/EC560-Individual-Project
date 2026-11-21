@@ -1,0 +1,334 @@
+Run started: 2026-11-20 23:29:40 
+R version: R version 4.5.2 (2025-10-31 ucrt) 
+
+=== Loading blp_airline_data.csv ===
+indexing blp_airline_data.csv [=====-----] 2.15GB/s, eta:  0sindexing blp_airline_data.csv [========] 629.90MB/s, eta:  0s                                                             Rows: 36420 
+Markets: 8476 
+Carriers: 12 — AA, AS, B6, DL, F9, G4, HA, NK, SY, UA, WN, XP 
+
+Variables present:
+ [1] "market_id"            "origin_mkt_id"       
+ [3] "dest_mkt_id"          "carrier"             
+ [5] "share"                "outside_share"       
+ [7] "y_logit"              "price"               
+ [9] "log_price"            "distance"            
+[11] "log_dist"             "frac_nonstop"        
+[13] "passengers"           "actual_pax"          
+[15] "market_size"          "total_pax_actual"    
+[17] "iv_blp_rival_logdist" "iv_hausman"          
+[19] "iv_sw_rival"          "n_products"          
+
+Variables present:
+ [1] "market_id"            "origin_mkt_id"       
+ [3] "dest_mkt_id"          "carrier"             
+ [5] "share"                "outside_share"       
+ [7] "y_logit"              "price"               
+ [9] "log_price"            "distance"            
+[11] "log_dist"             "frac_nonstop"        
+[13] "passengers"           "actual_pax"          
+[15] "market_size"          "total_pax_actual"    
+[17] "iv_blp_rival_logdist" "iv_hausman"          
+[19] "iv_sw_rival"          "n_products"          
+
+Run started: 2026-11-20 23:41:26 
+R version: R version 4.5.2 (2025-10-31 ucrt) 
+
+=== Loading blp_airline_data.csv ===
+indexing blp_airline_data.csv [================================================-------------------------------] 2.15GB/s, eta:  0sindexing blp_airline_data.csv [=============================================================================] 953.83MB/s, eta:  0s                                                                                                                                  Rows: 36420 
+Markets: 8476 
+Carriers: 12 — AA, AS, B6, DL, F9, G4, HA, NK, SY, UA, WN, XP 
+
+Variables present:
+ [1] "market_id"            "origin_mkt_id"        "dest_mkt_id"          "carrier"              "share"               
+ [6] "outside_share"        "y_logit"              "price"                "log_price"            "distance"            
+[11] "log_dist"             "frac_nonstop"         "passengers"           "actual_pax"           "market_size"         
+[16] "total_pax_actual"     "iv_blp_rival_logdist" "iv_hausman"           "iv_sw_rival"          "n_products"          
+
+=== Flexible Outside Option (addressing Prof comment) ===
+Any outside_share_flex <= 0? 0 (should be 0)
+Any share_flex >= 1? 0 (should be 0)
+
+Multiplier distribution (by route obs):
+# A tibble: 3 × 4
+  mkt_multiplier     n outside_share   pct
+           <int> <int>         <dbl> <dbl>
+1              2 12583         0.5    34.5
+2              3 19951         0.667  54.8
+3              5  3886         0.8    10.7
+
+Outside share summary (flexible):
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ 0.5000  0.5000  0.6667  0.6233  0.6667  0.8000 
+Compared to CP1 constant value: 0.6667 
+
+=== Price Construction Check ===
+Price = passenger-weighted avg MktFare per carrier-route, Q1 2025.
+Implication: averages over advance-purchase vs walk-up fare dispersion.
+Within-market price variation (CV = sd/mean by market):
+Mean CV of price across markets: 0.2499 
+Median CV: 0.2149 
+
+=== Within-Market Characteristic Variation ===
+Markets with zero variation in frac_nonstop: 4031 / 8476 
+Mean SD of frac_nonstop within market: 0.2074 
+
+Note: carrier dummies also provide within-market variation.
+
+=== QUASI FIRST STAGE ===
+Dependent variable: log(price)
+Controls: log_dist, frac_nonstop
+FE: carrier
+SE: clustered by market_id
+
+--- Spec 5: All IVs + Carrier FE ---
+OLS estimation, Dep. Var.: log_price
+Observations: 36,420
+Fixed-effects: carrier: 12
+Standard-errors: Clustered (market_id) 
+                      Estimate Std. Error   t value   Pr(>|t|)    
+log_dist              0.228974   0.005341  42.87141  < 2.2e-16 ***
+frac_nonstop         -0.048335   0.004525 -10.68191  < 2.2e-16 ***
+iv_blp_rival_logdist -0.003330   0.000168 -19.78679  < 2.2e-16 ***
+iv_hausman           -1.922276   0.205241  -9.36593  < 2.2e-16 ***
+iv_sw_rival          -0.016035   0.003670  -4.36931 1.2613e-05 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+RMSE: 0.191441     Adj. R2: 0.805966
+                 Within R2: 0.513644
+
+--- Spec 6: All FEs (IV2 + IV3 only; IV1 absorbed by market FE) ---
+OLS estimation, Dep. Var.: log_price
+Observations: 36,420
+Fixed-effects: carrier: 12,  market_id: 8,476
+Standard-errors: Clustered (market_id) 
+           Estimate Std. Error  t value  Pr(>|t|)    
+iv_hausman -1.57795   0.168394 -9.37055 < 2.2e-16 ***
+... 1 variable was removed because of collinearity (iv_sw_rival)
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+RMSE: 0.14795     Adj. R2: 0.848967
+                Within R2: 0.22353 
+
+--- Wald F-tests on excluded instruments (Spec 5) ---
+
+IV1 (rival log-distance):
+Wald test, H0: nullity of iv_blp_rival_logdist
+ stat = 391.5, p-value < 2.2e-16, on 1 and 8,475 DoF, VCOV: Clustered (market_id).$stat
+[1] 391.517
+
+$p
+[1] 3.182071e-85
+
+$df1
+[1] 1
+
+$df2
+[1] 8475
+
+$vcov
+[1] "Clustered (market_id)"
+
+
+IV2 (Hausman cost shift):
+Wald test, H0: nullity of iv_hausman
+ stat = 87.7, p-value < 2.2e-16, on 1 and 8,475 DoF, VCOV: Clustered (market_id).$stat
+[1] 87.72062
+
+$p
+[1] 9.493159e-21
+
+$df1
+[1] 1
+
+$df2
+[1] 8475
+
+$vcov
+[1] "Clustered (market_id)"
+
+
+IV3 (Southwest presence):
+Wald test, H0: nullity of iv_sw_rival
+ stat = 19.1, p-value = 1.261e-5, on 1 and 8,475 DoF, VCOV: Clustered (market_id).$stat
+[1] 19.09085
+
+$p
+[1] 1.261256e-05
+
+$df1
+[1] 1
+
+$df2
+[1] 8475
+
+$vcov
+[1] "Clustered (market_id)"
+
+
+Joint Wald F — all three IVs:
+Wald test, H0: joint nullity of iv_blp_rival_logdist, iv_hausman and iv_sw_rival
+ stat = 368.2, p-value < 2.2e-16, on 3 and 8,475 DoF, VCOV: Clustered (market_id).$stat
+[1] 368.1862
+
+$p
+[1] 8.666583e-225
+
+$df1
+[1] 3
+
+$df2
+[1] 8475
+
+$vcov
+[1] "Clustered (market_id)"
+
+
+Joint Wald F — IV2 + IV3 only (Spec 6, with market FE):
+Wald test, H0: nullity of iv_hausman
+ stat = 87.8, p-value < 2.2e-16, on 1 and 8,475 DoF, VCOV: Clustered (market_id).$stat
+[1] 87.80719
+
+$p
+[1] 9.090712e-21
+
+$df1
+[1] 1
+
+$df2
+[1] 8475
+
+$vcov
+[1] "Clustered (market_id)"
+
+
+--- First Stage Table (saved to output/) ---
+Saved: output/table1_first_stage.txt
+
+=== BERRY LOGIT DEMAND ESTIMATION (2SLS) ===
+
+--- OLS Demand (endogeneity bias expected) ---
+OLS estimation, Dep. Var.: y_logit_flex
+Observations: 36,420
+Fixed-effects: carrier: 12
+Standard-errors: Clustered (market_id) 
+             Estimate Std. Error  t value  Pr(>|t|)    
+price        0.000387   0.000152  2.55093  0.010761 *  
+log_dist     0.967182   0.019710 49.06996 < 2.2e-16 ***
+frac_nonstop 1.824141   0.023353 78.11278 < 2.2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+RMSE: 1.36546     Adj. R2: 0.380762
+                Within R2: 0.22729 
+
+--- 2SLS Demand (carrier FE, all 3 IVs) --- PRIMARY SPEC ---
+TSLS estimation: Second stage
+|- D.V.   : y_logit_flex
+|- Endo.  : price
+|- Instr. : iv_blp_rival_logdist, iv_hausman, iv_sw_rival
+Dep. Var.: y_logit_flex
+Observations: 36,420
+Fixed-effects: carrier: 12
+Standard-errors: Clustered (market_id) 
+             Estimate Std. Error  t value  Pr(>|t|)    
+fit_price    0.005083   0.000546  9.30631 < 2.2e-16 ***
+log_dist     0.642856   0.039637 16.21858 < 2.2e-16 ***
+frac_nonstop 1.912543   0.025451 75.14744 < 2.2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+RMSE: 1.40639     Adj. R2: 0.391678
+                Within R2: 0.240913
+F-test (1st stage), price: stat = 4,111.01, p < 2.2e-16, on 3 and 36,403 DoF.
+               Wu-Hausman: stat =   766.24, p < 2.2e-16, on 1 and 36,404 DoF.
+                   Sargan: stat = 5,351.77, p < 2.2e-16, on 2 DoF.
+
+--- 2SLS Demand (carrier + market FE, IV2+IV3) ---
+TSLS estimation: Second stage
+|- D.V.   : y_logit_flex
+|- Endo.  : price
+|- Instr. : iv_hausman, iv_sw_rival
+Dep. Var.: y_logit_flex
+Observations: 36,420
+Fixed-effects: carrier: 12,  market_id: 8,476
+Standard-errors: Clustered (market_id) 
+          Estimate Std. Error t value   Pr(>|t|)    
+fit_price -0.00406    0.00054 -7.5192 6.0736e-14 ***
+... 1 variable was removed because of collinearity (iv_sw_rival)
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+RMSE: 1.34734     Adj. R2: 0.221854
+                Within R2: 0.005015
+F-test (1st stage), price: stat = 8,946.504, p < 2.2e-16  , on 1 and 36,407 DoF.
+               Wu-Hausman: stat =    61.936, p = 3.676e-15, on 1 and 27,931 DoF.
+                   Sargan: stat =     0.000, p = 1        , on 1 DoF.
+
+First-stage F-statistic from 2SLS (carrier FE spec):
+F-test (1st stage), price: stat = 4,111.0, p < 2.2e-16, on 3 and 36,403 DoF.
+
+First-stage F-statistic from 2SLS (market FE spec):
+F-test (1st stage), price: stat = 8,946.5, p < 2.2e-16, on 1 and 36,407 DoF.
+Saved: output/table2_demand.txt
+
+=== IMPLIED ELASTICITIES ===
+
+Price coefficient — OLS (endogeneity bias):   0.000387 
+Price coefficient — 2SLS (consistent):        0.005083 
+
+Sign check: FAIL — check specification.
+
+OLS own-price elasticity (biased):
+   10%    25%    50%    75%    90% 
+0.0538 0.0820 0.1006 0.1210 0.1446 
+
+2SLS own-price elasticity (consistent):
+   10%    25%    50%    75%    90% 
+0.7061 1.0761 1.3206 1.5875 1.8975 
+
+Mean own-price elasticity (2SLS): 1.3402 
+
+--- Carrier-level average elasticities (2SLS) ---
+# A tibble: 12 × 5
+   carrier n_routes avg_price avg_share mean_elas
+   <chr>      <int>     <dbl>     <dbl>     <dbl>
+ 1 G4           605      81.8    0.179      0.338
+ 2 XP            61      80.4    0.126      0.361
+ 3 F9          2007     120.     0.0238     0.598
+ 4 NK          1387     129.     0.0292     0.640
+ 5 SY           207     189.     0.0478     0.917
+ 6 WN          5043     259.     0.0936     1.19 
+ 7 B6           938     251.     0.0412     1.23 
+ 8 AA          7997     310.     0.110      1.39 
+ 9 AS          2116     317.     0.0799     1.48 
+10 UA          7592     321.     0.0749     1.50 
+11 HA           817     306.     0.0301     1.50 
+12 DL          7650     349.     0.0952     1.60 
+
+Literature benchmarks:
+  Berry, Carnall & Spiller (2006): ε_jj ≈ -2.5 to -3.5
+  Ciliberto & Tamer (2009):        ε_jj ≈ -2.0 to -4.0
+
+Assessment: OUTSIDE typical range — mean = 1.34 — revisit specification.
+
+IIA caveat: Pure logit cross-elasticities are proportional to
+market share regardless of product similarity. This likely
+understates substitution between close competitors (e.g., B6 vs NK).
+Random coefficients (final project) will address this.
+
+=== MERGER OVERVIEW: JetBlue (B6) + Spirit (NK) ===
+
+B6 markets: 938 
+NK markets: 1387 
+Overlapping markets (both carriers present): 393 
+  = 41.9% of B6 routes
+  = 28.3% of NK routes
+
+Average fares in overlap markets:
+# A tibble: 2 × 4
+  carrier avg_price avg_share n_routes
+  <chr>       <dbl>     <dbl>    <int>
+1 B6           252.    0.0400      393
+2 NK           127.    0.0370      393
+
+Note: Full merger simulation (Bertrand FOC + ownership matrix update)
+will be in the final project submission.
+
+Run completed: 2026-11-20 23:41:27 
